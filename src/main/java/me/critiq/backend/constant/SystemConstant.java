@@ -1,4 +1,4 @@
-package me.critiq.backend.util;
+package me.critiq.backend.constant;
 
 public class SystemConstant {
     public static final String CODE = "code";

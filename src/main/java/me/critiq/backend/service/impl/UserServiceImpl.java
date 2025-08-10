@@ -14,7 +14,7 @@ import me.critiq.backend.domain.entity.User;
 import me.critiq.backend.service.EmailService;
 import me.critiq.backend.service.UserService;
 import me.critiq.backend.util.RegexUtil;
-import me.critiq.backend.util.SystemConstant;
+import me.critiq.backend.constant.SystemConstant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
