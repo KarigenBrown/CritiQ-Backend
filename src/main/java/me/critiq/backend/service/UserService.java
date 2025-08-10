@@ -1,6 +1,7 @@
 package me.critiq.backend.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import jakarta.servlet.http.HttpSession;
 import me.critiq.backend.domain.entity.User;
 
 /**
@@ -11,5 +12,6 @@ import me.critiq.backend.domain.entity.User;
  */
 public interface UserService extends IService<User> {
 
+    boolean getCode(String email, HttpSession session);
 }
 
