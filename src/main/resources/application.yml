@@ -50,8 +50,10 @@ spring:
         max-attempts: 3
         max-interval: 10000ms
         multiplier: 1
+  main:
+    allow-circular-references: true
 mybatis-plus:
-  type-aliases-package: me.critiq.backend.domain.entiry # 别名扫描包
+  type-aliases-package: me.critiq.backend.domain.entity # 别名扫描包
 jwt:
   key:
     private: classpath:key/private_key.pem

@@ -3,6 +3,7 @@ package me.critiq.backend.config;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
+import me.critiq.backend.util.SystemConstant;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -49,7 +50,9 @@ public class SecurityConfig {
                         .requestMatchers("/v3/**").permitAll()
                         // swagger
                         .requestMatchers(HttpMethod.GET, "/user/code").anonymous()
-                        .anyRequest().permitAll()
+                        .requestMatchers(HttpMethod.POST, "/user/register").anonymous()
+                        .requestMatchers(HttpMethod.POST, "/user/login").anonymous()
+                        .anyRequest().authenticated()
                 )
                 .cors(Customizer.withDefaults())
                 .csrf(CsrfConfigurer::disable)
@@ -58,7 +61,7 @@ public class SecurityConfig {
                 .oauth2ResourceServer(oauth -> oauth
                         .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter()))
                 )
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                // .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .exceptionHandling(exceptions -> exceptions
                         .authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint())
                         .accessDeniedHandler(new BearerTokenAccessDeniedHandler())
@@ -90,7 +93,7 @@ public class SecurityConfig {
     @Bean
     public JwtAuthenticationConverter jwtAuthenticationConverter() {
         var grantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
-        grantedAuthoritiesConverter.setAuthoritiesClaimName("role");
+        grantedAuthoritiesConverter.setAuthoritiesClaimName(SystemConstant.LEVEL);
 
         var jwtAuthenticationConverter = new JwtAuthenticationConverter();
         jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter);

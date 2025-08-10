@@ -4,7 +4,11 @@ package me.critiq.backend.controller;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import me.critiq.backend.domain.dto.LoginFormDto;
+import me.critiq.backend.domain.dto.RegisterFormDto;
+import me.critiq.backend.domain.entity.User;
 import me.critiq.backend.service.UserService;
+import me.critiq.backend.util.SecurityUtil;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,17 +28,37 @@ public class UserController {
 
     @GetMapping("/code")
     // 原版使用手机号实现
-    public ResponseEntity<String> getCode(@RequestParam("email") String email, HttpSession session) {
-        var succeed = userService.getCode(email, session);
+    public ResponseEntity<String> getCode(
+            // todo 变更为手机号
+            @RequestParam("email") String email,
+            HttpSession session
+    ) {
+        userService.getCode(email, session);
+        return ResponseEntity
+                .ok()
+                .build();
+    }
 
-        if (succeed) {
-            return ResponseEntity
-                    .ok()
-                    .build();
-        }
+    @PostMapping("/register")
+    public ResponseEntity<Void> register(
+            @RequestBody RegisterFormDto registerForm,
+            HttpSession session
+    ) {
+        userService.register(registerForm, session);
+        return ResponseEntity.ok().build();
+    }
 
-        return ResponseEntity.badRequest()
-                .body("手机号格式错误");
+    @PostMapping("/login")
+    public ResponseEntity<String> login(@RequestBody LoginFormDto loginForm) {
+        var token = userService.login(loginForm);
+        return ResponseEntity.ok(token);
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<User> me() {
+        var userid = SecurityUtil.getUserId();
+        var user = userService.getById(userid);
+        return ResponseEntity.ok(user);
     }
 }
 

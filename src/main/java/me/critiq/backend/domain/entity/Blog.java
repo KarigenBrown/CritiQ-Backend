@@ -6,9 +6,9 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.experimental.Accessors;
 
 /**
  * (Blog)表实体类
@@ -17,7 +17,7 @@ import lombok.experimental.Accessors;
  * @since 2025-08-10 15:19:37
  */
 @Data
-@Accessors(chain = true)
+@Builder
 @TableName("blog")
 @EqualsAndHashCode(callSuper = false)
 public class Blog {

@@ -5,9 +5,9 @@ import java.util.Date;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.experimental.Accessors;
 
 /**
  * (Follow)表实体类
@@ -16,7 +16,7 @@ import lombok.experimental.Accessors;
  * @since 2025-08-10 15:31:22
  */
 @Data
-@Accessors(chain = true)
+@Builder
 @TableName("follow")
 @EqualsAndHashCode(callSuper = false)
 public class Follow {

@@ -311,8 +311,9 @@ CREATE TABLE `user`
 (
     `id`          bigint(20) UNSIGNED                                           NOT NULL AUTO_INCREMENT COMMENT '主键',
     `email`       varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '邮箱',
-    `phone`       varchar(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci  NOT NULL COMMENT '手机号码',
-    `password`    varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL     DEFAULT '' COMMENT '密码,加密存储',
+    `phone`       varchar(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci  NULL COMMENT '手机号码',
+    `password`    text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci         NOT NULL COMMENT '密码,加密存储',
+    `level`       tinyint(1) UNSIGNED                                           NULL     DEFAULT 0 COMMENT '会员级别,0~9级,0代表未开通会员',
     `nick_name`   varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci  NULL     DEFAULT '' COMMENT '昵称,默认是用户id',
     `icon`        varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL     DEFAULT '' COMMENT '人物头像',
     `create_time` timestamp                                                     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
@@ -329,16 +330,16 @@ CREATE TABLE `user`
 -- Records of user
 -- ----------------------------
 INSERT INTO `user`
-VALUES (1, '1@qq.com', '13686869696', '', '小鱼同学', '/imgs/blogs/blog1.jpg', '2021-12-24 10:27:19',
+VALUES (1, '1@qq.com', '13686869696', '', 0, '小鱼同学', '/imgs/blogs/blog1.jpg', '2021-12-24 10:27:19',
         '2022-01-11 16:04:00');
 INSERT INTO `user`
-VALUES (2, '2@qq.com', '13838411438', '', '可可今天不吃肉', '/imgs/icons/kkjtbcr.jpg', '2021-12-24 15:14:39',
+VALUES (2, '2@qq.com', '13838411438', '', 0, '可可今天不吃肉', '/imgs/icons/kkjtbcr.jpg', '2021-12-24 15:14:39',
         '2021-12-28 19:58:04');
 INSERT INTO `user`
-VALUES (4, '3@qq.com', '13456789011', '', 'user_slxaxy2au9f3tanffaxr', '', '2022-01-07 12:07:53',
+VALUES (4, '3@qq.com', '13456789011', '', 0, 'user_slxaxy2au9f3tanffaxr', '', '2022-01-07 12:07:53',
         '2022-01-07 12:07:53');
 INSERT INTO `user`
-VALUES (5, '4@qq.com', '13456789001', '', '可爱多', '/imgs/icons/user5-icon.png', '2022-01-07 16:11:33',
+VALUES (5, '4@qq.com', '13456789001', '', 0, '可爱多', '/imgs/icons/user5-icon.png', '2022-01-07 16:11:33',
         '2022-03-11 09:09:20');
 
 -- ----------------------------
@@ -355,7 +356,6 @@ CREATE TABLE `user_info`
     `gender`      tinyint(1) UNSIGNED                                           NULL     DEFAULT 0 COMMENT '性别,0:男,1:女',
     `birthday`    date                                                          NULL     DEFAULT NULL COMMENT '生日',
     `credits`     int(8) UNSIGNED                                               NULL     DEFAULT 0 COMMENT '积分',
-    `level`       tinyint(1) UNSIGNED                                           NULL     DEFAULT 0 COMMENT '会员级别,0~9级,0代表未开通会员',
     `create_time` timestamp                                                     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     `update_time` timestamp                                                     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
     PRIMARY KEY (`user_id`) USING BTREE

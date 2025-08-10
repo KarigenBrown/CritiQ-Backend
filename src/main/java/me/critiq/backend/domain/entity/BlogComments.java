@@ -7,9 +7,9 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.experimental.Accessors;
 
 /**
  * (BlogComments)表实体类
@@ -18,7 +18,7 @@ import lombok.experimental.Accessors;
  * @since 2025-08-10 15:28:38
  */
 @Data
-@Accessors(chain = true)
+@Builder
 @TableName("blog_comments")
 @EqualsAndHashCode(callSuper = false)
 public class BlogComments {

@@ -30,7 +30,7 @@ class CritiQBackendApplicationTests {
                         .session(session)
         ).andExpect(status().isOk());
 
-        var code = String.valueOf(session.getAttribute("code"));
+        var code = session.getAttribute("code").toString();
         assert StringUtils.hasText(code);
         log.info("session中的验证码为: {}", code);
     }
