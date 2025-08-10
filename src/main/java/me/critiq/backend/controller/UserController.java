@@ -10,6 +10,8 @@ import me.critiq.backend.domain.entity.User;
 import me.critiq.backend.service.UserService;
 import me.critiq.backend.util.SecurityUtil;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -55,7 +57,10 @@ public class UserController {
     }
 
     @GetMapping("/me")
+    @PreAuthorize("hasAuthority('level_0')")
     public ResponseEntity<User> me() {
+        Authentication authentication = SecurityUtil.getAuthentication();
+        log.info(authentication.getAuthorities().toString());
         var userid = SecurityUtil.getUserId();
         var user = userService.getById(userid);
         return ResponseEntity.ok(user);
