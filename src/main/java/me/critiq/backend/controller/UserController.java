@@ -2,6 +2,7 @@ package me.critiq.backend.controller;
 
 
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.critiq.backend.domain.dto.LoginFormDto;
@@ -32,7 +33,7 @@ public class UserController {
     // 原版使用手机号实现
     public ResponseEntity<String> getCode(
             // todo 变更为手机号
-            @RequestParam("email") String email,
+            @Valid @RequestParam("email") String email,
             HttpSession session
     ) {
         userService.getCode(email, session);
@@ -51,7 +52,7 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody LoginFormDto loginForm) {
+    public ResponseEntity<String> login(@Valid @RequestBody LoginFormDto loginForm) {
         var token = userService.login(loginForm);
         return ResponseEntity.ok(token);
     }
