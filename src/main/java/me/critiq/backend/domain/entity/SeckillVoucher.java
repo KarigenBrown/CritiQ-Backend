@@ -5,9 +5,7 @@ import java.time.LocalDateTime;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import lombok.Builder;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 
 /**
  * 秒杀优惠券表,与优惠券是一对一关系(SeckillVoucher)表实体类
@@ -18,7 +16,9 @@ import lombok.EqualsAndHashCode;
 @Data
 @Builder
 @TableName("seckill_voucher")
+@NoArgsConstructor
 @EqualsAndHashCode(callSuper = false)
+@AllArgsConstructor
 public class SeckillVoucher {
     // 关联的优惠券的id
     @TableId(value = "voucher_id", type = IdType.INPUT)

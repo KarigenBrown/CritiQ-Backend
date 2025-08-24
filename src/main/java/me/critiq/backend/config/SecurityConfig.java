@@ -60,7 +60,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/user/register").anonymous()
                         .requestMatchers(HttpMethod.POST, "/user/login").anonymous()
                         // any other
-                        .anyRequest().authenticated()
+                        .anyRequest().permitAll()
                 ).cors(Customizer.withDefaults())
                 .csrf(CsrfConfigurer::disable)
                 .formLogin(FormLoginConfigurer::disable)

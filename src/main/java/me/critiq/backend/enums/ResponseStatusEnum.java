@@ -26,6 +26,9 @@ public enum ResponseStatusEnum {
     NICKNAME_EXIST(512, "昵称已存在"),
     INVALID_EMAIL(513, "邮箱不合法"),
     CODE_ERROR(514, "验证码错误"),
+    SHOP_NOT_FOUND(515, "商店不存在"),
+    ID_NOT_NULL(516, "id不能为空"),
+    NOT_FOUND(517, "查询结果不存在"),
     ;
 
     private final Integer code;

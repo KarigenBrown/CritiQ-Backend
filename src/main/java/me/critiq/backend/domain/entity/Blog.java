@@ -6,9 +6,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import lombok.Builder;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 
 /**
  * (Blog)表实体类
@@ -19,7 +17,9 @@ import lombok.EqualsAndHashCode;
 @Data
 @Builder
 @TableName("blog")
+@NoArgsConstructor
 @EqualsAndHashCode(callSuper = false)
+@AllArgsConstructor
 public class Blog {
     // 主键
     @TableId(value = "id", type = IdType.AUTO)

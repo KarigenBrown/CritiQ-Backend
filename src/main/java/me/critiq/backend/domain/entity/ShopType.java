@@ -6,9 +6,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Builder;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 
 /**
  * (ShopType)表实体类
@@ -19,7 +17,9 @@ import lombok.EqualsAndHashCode;
 @Data
 @Builder
 @TableName("shop_type")
+@NoArgsConstructor
 @EqualsAndHashCode(callSuper = false)
+@AllArgsConstructor
 public class ShopType {
     // 主键
     @TableId(value = "id", type = IdType.AUTO)

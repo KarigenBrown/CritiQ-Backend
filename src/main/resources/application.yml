@@ -54,6 +54,8 @@ spring:
     allow-circular-references: true
 mybatis-plus:
   type-aliases-package: me.critiq.backend.domain.entity # 别名扫描包
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 jwt:
   key:
     private: classpath:key/private_key.pem

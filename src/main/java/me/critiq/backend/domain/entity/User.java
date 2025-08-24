@@ -10,9 +10,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
-import lombok.Builder;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -26,7 +24,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 @Data
 @Builder
 @TableName("user")
+@NoArgsConstructor
 @EqualsAndHashCode(callSuper = false)
+@AllArgsConstructor
 public class User implements UserDetails {
     // 主键
     @TableId(value = "id", type = IdType.AUTO)

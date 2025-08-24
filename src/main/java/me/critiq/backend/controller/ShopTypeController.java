@@ -25,7 +25,7 @@ import java.util.List;
  */
 @Slf4j
 @RestController
-@RequestMapping("/shopType")
+@RequestMapping("/shop-type")
 @RequiredArgsConstructor
 public class ShopTypeController {
     // 服务对象
@@ -34,9 +34,7 @@ public class ShopTypeController {
     @GetMapping("/list")
     @PreAuthorize("hasAuthority('level_0')")
     public ResponseEntity<List<ShopType>> getShopTypeList() {
-        var shopTypeList = shopTypeService.lambdaQuery()
-                .orderByAsc(ShopType::getSort)
-                .list();
+        var shopTypeList = shopTypeService.getList();
         return ResponseEntity.ok(shopTypeList);
     }
 }

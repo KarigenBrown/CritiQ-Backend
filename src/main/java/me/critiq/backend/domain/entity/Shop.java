@@ -8,9 +8,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
-import lombok.Builder;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 
 /**
  * (Shop)表实体类
@@ -21,7 +19,9 @@ import lombok.EqualsAndHashCode;
 @Data
 @Builder
 @TableName("shop")
+@NoArgsConstructor
 @EqualsAndHashCode(callSuper = false)
+@AllArgsConstructor
 public class Shop {
     // 主键
     @TableId(value = "id", type = IdType.AUTO)
@@ -56,6 +56,7 @@ public class Shop {
     private LocalDateTime createTime;
     // 更新时间
     private LocalDateTime updateTime;
+
     @TableField(exist = false)
     private Double distance;
 }

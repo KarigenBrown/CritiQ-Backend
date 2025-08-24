@@ -8,9 +8,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
-import lombok.Builder;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 
 /**
  * (UserInfo)表实体类
@@ -21,7 +19,9 @@ import lombok.EqualsAndHashCode;
 @Data
 @Builder
 @TableName("user_info")
+@NoArgsConstructor
 @EqualsAndHashCode(callSuper = false)
+@AllArgsConstructor
 public class UserInfo {
     // 主键,用户id
     @TableId(value = "user_id", type = IdType.AUTO)
