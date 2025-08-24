@@ -1,19 +1,25 @@
 package me.critiq.backend.controller;
 
 
+import cn.hutool.core.bean.BeanUtil;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import me.critiq.backend.constant.SystemConstant;
 import me.critiq.backend.domain.dto.LoginFormDto;
 import me.critiq.backend.domain.dto.RegisterFormDto;
 import me.critiq.backend.domain.entity.User;
+import me.critiq.backend.domain.vo.UserVo;
 import me.critiq.backend.service.UserService;
 import me.critiq.backend.util.SecurityUtil;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 /**
  * (User)表控制层
@@ -26,28 +32,24 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/user")
 @RequiredArgsConstructor
 public class UserController {
-    // 服务对象
     private final UserService userService;
+    private final StringRedisTemplate stringRedisTemplate;
 
     @GetMapping("/code")
     // 原版使用手机号实现
     public ResponseEntity<String> getCode(
             // todo 变更为手机号
-            @Valid @RequestParam("email") String email,
-            HttpSession session
+            @Valid @RequestParam("email") String email
     ) {
-        userService.getCode(email, session);
+        userService.getCode(email);
         return ResponseEntity
                 .ok()
                 .build();
     }
 
     @PostMapping("/register")
-    public ResponseEntity<Void> register(
-            @RequestBody RegisterFormDto registerForm,
-            HttpSession session
-    ) {
-        userService.register(registerForm, session);
+    public ResponseEntity<Void> register(@RequestBody RegisterFormDto registerForm) {
+        userService.register(registerForm);
         return ResponseEntity.ok().build();
     }
 
@@ -58,13 +60,12 @@ public class UserController {
     }
 
     @GetMapping("/me")
-    @PreAuthorize("hasAuthority('level_0')")
-    public ResponseEntity<User> me() {
-        Authentication authentication = SecurityUtil.getAuthentication();
-        log.info(authentication.getAuthorities().toString());
-        var userid = SecurityUtil.getUserId();
-        var user = userService.getById(userid);
-        return ResponseEntity.ok(user);
+    @PreAuthorize("hasAnyAuthority('level_0')")
+    public ResponseEntity<UserVo> me() {
+        var userId = SecurityUtil.getUserId();
+        var userMap = stringRedisTemplate.opsForHash().entries(SystemConstant.LOGIN_USER_KEY + userId);
+        var userVo = BeanUtil.toBean(userMap, UserVo.class);
+        return ResponseEntity.ok(userVo);
     }
 }
 

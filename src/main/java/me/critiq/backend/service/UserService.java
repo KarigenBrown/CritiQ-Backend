@@ -14,9 +14,9 @@ import me.critiq.backend.domain.entity.User;
  */
 public interface UserService extends IService<User> {
 
-    void getCode(String email, HttpSession session);
+    void getCode(String email);
 
-    void register(RegisterFormDto registerForm, HttpSession session);
+    void register(RegisterFormDto registerForm);
 
     String login(LoginFormDto loginForm);
 }

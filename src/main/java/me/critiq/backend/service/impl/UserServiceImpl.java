@@ -1,5 +1,7 @@
 package me.critiq.backend.service.impl;
 
+import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.bean.copier.CopyOptions;
 import cn.hutool.core.util.RandomUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import jakarta.servlet.http.HttpSession;
@@ -7,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.critiq.backend.domain.dto.LoginFormDto;
 import me.critiq.backend.domain.dto.RegisterFormDto;
+import me.critiq.backend.domain.vo.UserVo;
 import me.critiq.backend.enums.ResponseStatusEnum;
 import me.critiq.backend.exception.SystemException;
 import me.critiq.backend.mapper.UserMapper;
@@ -17,6 +20,7 @@ import me.critiq.backend.util.RegexUtil;
 import me.critiq.backend.constant.SystemConstant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -30,6 +34,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -45,13 +51,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     private final EmailService emailService;
     private final PasswordEncoder passwordEncoder;
     private final JwtEncoder jwtEncoder;
+    private final StringRedisTemplate stringRedisTemplate;
 
     @Lazy
     @Autowired
     private AuthenticationManager authenticationManager;
 
     @Override
-    public void getCode(String email, HttpSession session) {
+    public void getCode(String email) {
         // 1.校验手机号
         if (RegexUtil.isEmailInvalid(email)) {
             // 2.如果不符合,返回错误信息
@@ -60,27 +67,28 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         // 3.符合,生成验证码
         var code = RandomUtil.randomNumbers(6);
         log.info("code: {}", code);
-        // 4.保存验证码到session
-        session.setAttribute(SystemConstant.CODE, code);
+        // 4.保存验证码到redis
+        stringRedisTemplate.opsForValue().set(SystemConstant.LOGIN_CODE_KEY + email, code, Duration.ofMinutes(SystemConstant.LOGIN_CODE_TTL));
         // 5.发送验证码
         // 已经删除授权码
         // emailService.sendCode(email, code);
     }
 
     @Override
-    public void register(RegisterFormDto registerForm, HttpSession session) {
+    public void register(RegisterFormDto registerForm) {
         // 1.校验手机号
         var email = registerForm.getEmail();
         if (RegexUtil.isEmailInvalid(email)) {
             throw new SystemException(ResponseStatusEnum.INVALID_EMAIL);
         }
         // 2.校验验证码
-        var sessionCode = session.getAttribute(SystemConstant.CODE).toString();
-        var code = registerForm.getCode();
+        var cacheCode = stringRedisTemplate.opsForValue().get(SystemConstant.LOGIN_CODE_KEY + email);
+        log.info("{}", cacheCode);
+        // var code = registerForm.getCode();
         // 3.不一致,报错
-        if (!Objects.equals(code, sessionCode)) {
-            throw new SystemException(ResponseStatusEnum.CODE_ERROR);
-        }
+        // if (!Objects.equals(code, cacheCode)) {
+        //     throw new SystemException(ResponseStatusEnum.CODE_ERROR);
+        // }
         // 4.新建用户
         var user = User.builder()
                 .email(email)
@@ -103,7 +111,20 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         var authentication = authenticationManager.authenticate(authenticationToken);
         var user = (User) authentication.getPrincipal();
 
-        // 3.生成token并返回
+        // 3.将用户信息存入redis
+        var userVo = BeanUtil.copyProperties(user, UserVo.class);
+        Map<String, Object> userHash = BeanUtil.beanToMap(
+                userVo,
+                new HashMap<>(),
+                CopyOptions.create()
+                        .setIgnoreNullValue(true)
+                        .setFieldValueEditor((fieldName, fieldValue) -> fieldValue.toString())
+        );
+        String redisKey = SystemConstant.LOGIN_USER_KEY + user.getId();
+        stringRedisTemplate.opsForHash().putAll(redisKey, userHash);
+        stringRedisTemplate.expire(redisKey, Duration.ofMinutes(SystemConstant.LOGIN_USER_TTL));
+
+        // 4.生成token并返回
         // 通过jwt+spring security+security context holder的实现等效于session+thread local+interceptor
         var now = Instant.now();
         var claims = JwtClaimsSet.builder()

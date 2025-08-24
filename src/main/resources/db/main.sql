@@ -343,35 +343,6 @@ VALUES (5, '4@qq.com', '13456789001', '', 0, '可爱多', '/imgs/icons/user5-ico
         '2022-03-11 09:09:20');
 
 -- ----------------------------
--- Table structure for third_user
--- ----------------------------
-DROP TABLE IF EXISTS `third_user`;
-CREATE TABLE `third_user`
-(
-    `id`                 bigint(20) UNSIGNED                                           NOT NULL AUTO_INCREMENT COMMENT '主键',
-    `email`              varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '邮箱',
-    `phone`              varchar(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci  NULL COMMENT '手机号码',
-    `level`              tinyint(1) UNSIGNED                                           NULL     DEFAULT 0 COMMENT '会员级别,0~9级,0代表未开通会员',
-    `nick_name`          varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci  NULL     DEFAULT '' COMMENT '昵称,默认是用户id',
-    `icon`               varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL     DEFAULT '' COMMENT '人物头像',
-    `create_time`        timestamp                                                     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-    `update_time`        timestamp                                                     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
-
-    `third_id`           bigint(20) UNSIGNED                                           NOT NULL COMMENT '第三方主键',
-    `credentials`        text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci         NOT NULL COMMENT 'token',
-    `credentials_expiry` timestamp                                                     NOT NULL COMMENT 'token过期时间',
-    `registration_id`    varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci  NOT NULL COMMENT '第三方网站名',
-    PRIMARY KEY (`id`) USING BTREE,
-    UNIQUE INDEX `uniqe_key_email` (`email`) USING BTREE,
-    UNIQUE INDEX `uniqe_key_third_id` (`third_id`) USING BTREE
-) ENGINE = InnoDB
-  AUTO_INCREMENT = 1010
-  CHARACTER SET = utf8mb4
-  COLLATE = utf8mb4_general_ci
-  ROW_FORMAT = Compact;
-
-
--- ----------------------------
 -- Table structure for user_info
 -- ----------------------------
 DROP TABLE IF EXISTS `user_info`;
