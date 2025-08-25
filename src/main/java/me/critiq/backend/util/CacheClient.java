@@ -95,7 +95,7 @@ public class CacheClient {
 
         // 5.判断是否过期
         if (expiration.isAfter(Instant.now())) {
-            // 5.1未过期,直接返回店铺信息
+            // 5.1未过期,直接返回信息
             return data;
         }
 
@@ -117,7 +117,7 @@ public class CacheClient {
             log.info("获取{}", Thread.currentThread().getName());
             log.info("{}", lock.getHoldCount());
             // 6.3成功,开启独立线程,实现缓存重建
-            CACHE_REBUILD_EXECUTOR.submit(() -> {
+            Runnable task = () -> {
                 try {
                     // 查询数据库
                     log.info("db查询{}", Thread.currentThread().getName());
@@ -129,15 +129,27 @@ public class CacheClient {
                     throw new SystemException(ResponseStatusEnum.SYSTEM_ERROR);
                 } finally {
                     // 释放锁
+                    // 大坑,线程池吞异常,unlock抛异常导致后面不输出
                     // lock.unlock();
                     lock.forceUnlock();
                     log.info("释放锁{}", Thread.currentThread().getName());
                     log.info("{}", lock.getHoldCount());
                 }
-            });
+            };
+            CACHE_REBUILD_EXECUTOR.submit(task);
+            // new Thread(task).start();
         }
 
         // 6.4返回过期的信息
         return data;
+    }
+
+    // 使用 setnx 命令生成锁,不可重入
+    private Boolean tryLock(String key) {
+        return stringRedisTemplate.opsForValue().setIfAbsent(key, "1", Duration.ofSeconds(10));
+    }
+
+    private Boolean unLock(String key) {
+        return stringRedisTemplate.delete(key);
     }
 }

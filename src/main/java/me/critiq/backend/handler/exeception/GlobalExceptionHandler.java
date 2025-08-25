@@ -11,14 +11,14 @@ import java.util.Optional;
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-    @ExceptionHandler(RuntimeException.class)
+    // @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<String> handleRuntimeException(RuntimeException ex) {
         log.error(ex.getMessage(), ex);
         return ResponseEntity.internalServerError()
                 .body("服务器异常");
     }
 
-    @ExceptionHandler(SystemException.class)
+    // @ExceptionHandler(SystemException.class)
     public ResponseEntity<String> handleSystemException(SystemException ex) {
         log.error(ex.getMessage(), ex);
         return ResponseEntity.of(Optional.of(ex.getMessage()));

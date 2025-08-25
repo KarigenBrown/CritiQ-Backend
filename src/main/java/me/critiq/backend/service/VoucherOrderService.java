@@ -11,5 +11,8 @@ import me.critiq.backend.domain.entity.VoucherOrder;
  */
 public interface VoucherOrderService extends IService<VoucherOrder> {
 
+    Long seckillVoucher(Long voucherId);
+
+    Long createVoucherOrder(Long voucherId, Long userId);
 }
 

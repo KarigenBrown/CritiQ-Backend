@@ -103,7 +103,7 @@ public class ShopServiceImpl extends ServiceImpl<ShopMapper, Shop> implements Sh
         boolean isLock = lock.tryLock();
 
         // 6.2判断是否获取锁成功
-        if (isLock) {
+        if (isLock && lock.getHoldCount() == 1) {
             // 6.3成功,开启独立线程,实现缓存重建
             CACHE_REBUILD_EXECUTOR.submit(() -> {
                 try {
@@ -114,7 +114,7 @@ public class ShopServiceImpl extends ServiceImpl<ShopMapper, Shop> implements Sh
                 } finally {
                     // 释放锁
                     log.info("锁释放{}", Thread.currentThread().getName());
-                    lock.unlock();
+                    lock.forceUnlock();
                 }
             });
         }
@@ -141,6 +141,7 @@ public class ShopServiceImpl extends ServiceImpl<ShopMapper, Shop> implements Sh
             throw new SystemException(ResponseStatusEnum.SHOP_NOT_FOUND);
         }
 
+        // shopJson等于null的情况,对于第一次查询
         // 4.实现缓存重建
         var lockKey = SystemConstant.LOCK_SHOP_KEY + id;
         // 4.1获取互斥锁
@@ -153,7 +154,8 @@ public class ShopServiceImpl extends ServiceImpl<ShopMapper, Shop> implements Sh
             // 4.2判断是否获取成功
             if (!isLock) {
                 log.info("获取锁失败{}", Thread.currentThread().getName());
-                // 4.3失败,则休眠并重试
+                // 4.3失败,则休眠并重试,失败线程指挥等待成功线程将数据读取到redis,然后失败线程从redis读取,失败线程不会读取db
+                // 理论上只有一个成功线程,且因为都是并行的所以不用考虑重入问题
                 Thread.sleep(50);
                 return queryWithMutex(id);
             }

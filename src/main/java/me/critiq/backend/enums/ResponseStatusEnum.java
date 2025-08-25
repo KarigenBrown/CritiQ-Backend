@@ -29,6 +29,10 @@ public enum ResponseStatusEnum {
     SHOP_NOT_FOUND(515, "商店不存在"),
     ID_NOT_NULL(516, "id不能为空"),
     NOT_FOUND(517, "查询结果不存在"),
+    SECKILL_NOT_STARTED(518, "秒杀尚未开始"),
+    SECKILL_ENDED(519, "秒杀已经结束"),
+    STOCK_NOT_ENOUGH(520, "库存不足"),
+    REPEAT_PURCHASE(521, "用户已经购买过了"),
     ;
 
     private final Integer code;

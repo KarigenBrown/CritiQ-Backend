@@ -1,8 +1,11 @@
 package me.critiq.backend.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import lombok.RequiredArgsConstructor;
+import me.critiq.backend.domain.entity.Voucher;
 import me.critiq.backend.mapper.SeckillVoucherMapper;
 import me.critiq.backend.domain.entity.SeckillVoucher;
+import me.critiq.backend.mapper.VoucherMapper;
 import me.critiq.backend.service.SeckillVoucherService;
 import org.springframework.stereotype.Service;
 
@@ -13,7 +16,21 @@ import org.springframework.stereotype.Service;
  * @since 2025-08-10 16:15:27
  */
 @Service("seckillVoucherService")
+@RequiredArgsConstructor
 public class SeckillVoucherServiceImpl extends ServiceImpl<SeckillVoucherMapper, SeckillVoucher> implements SeckillVoucherService {
+    private final VoucherMapper voucherMapper;
 
+
+    @Override
+    public void addSeckillVoucher(Voucher voucher) {
+        voucherMapper.insert(voucher);
+        var seckillVoucher = SeckillVoucher.builder()
+                .voucherId(voucher.getId())
+                .stock(voucher.getStock())
+                .beginTime(voucher.getBeginTime())
+                .endTime(voucher.getEndTime())
+                .build();
+        this.save(seckillVoucher);
+    }
 }
 
