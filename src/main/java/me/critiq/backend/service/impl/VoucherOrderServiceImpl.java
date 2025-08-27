@@ -67,7 +67,7 @@ public class VoucherOrderServiceImpl extends ServiceImpl<VoucherOrderMapper, Vou
 
     @PostConstruct
     public void init() {
-        SECKILL_ORDER_EXECUTOR.submit(new VoucherOrderTask());
+        // SECKILL_ORDER_EXECUTOR.submit(new VoucherOrderTask());
     }
 
     /*private class VoucherOrderTask implements Runnable {

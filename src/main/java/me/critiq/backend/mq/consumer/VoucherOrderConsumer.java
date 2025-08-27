@@ -23,6 +23,7 @@ public class VoucherOrderConsumer {
     @Bean
     public Consumer<VoucherOrder> voucherOrder() {
         return voucherOrder -> {
+            log.info("mq接收");
             // 1.获取用户
             var userId = voucherOrder.getUserId();
             // 2. 创建锁对象

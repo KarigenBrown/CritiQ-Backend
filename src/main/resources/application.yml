@@ -30,12 +30,17 @@ spring:
           enabled: true
     ssl:
       enabled: true
+  cloud:
+    stream:
+      function:
+        bindings:
+          voucherOrder-in-0: queue.orders
   rabbitmq:
     host: localhost
     username: rabbitmq
     password: rabbitmq
     virtual-host: /
-    port: 15672
+    port: 5672
     listener:
       simple:
         concurrency: 10

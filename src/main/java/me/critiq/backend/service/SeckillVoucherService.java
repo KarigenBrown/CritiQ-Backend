@@ -13,5 +13,6 @@ import me.critiq.backend.domain.entity.Voucher;
 public interface SeckillVoucherService extends IService<SeckillVoucher> {
 
     void addSeckillVoucher(Voucher voucher);
+    void saveVouchers2Redis();
 }
 

@@ -14,6 +14,7 @@ public class VoucherOrderProducer {
     private final StreamBridge streamBridge;
 
     public void produce(VoucherOrder voucherOrder) {
+        log.info("发送至mq");
         streamBridge.send(SystemConstant.QUEUE_NAME, voucherOrder);
     }
 }
