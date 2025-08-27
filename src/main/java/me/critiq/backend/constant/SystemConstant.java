@@ -22,6 +22,7 @@ public class SystemConstant {
     public static final String LOCK_ORDER_KEY = "lock:order:";
     public static final String SECKILL_STOCK_KEY = "seckill:stock:";
     public static final String SECKILL_ORDER_KEY = "seckill:order:";
+    public static final String STREAM_NAME = "stream.orders";
 
     private SystemConstant() {
     }

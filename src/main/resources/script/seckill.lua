@@ -4,6 +4,10 @@ local voucherId = ARGV[1]
 -- 1.2用户id
 local userId = ARGV[2]
 
+-- XGROUP CREATE stream.orders g1 0 MKSTREAM
+-- 1.3订单id
+local orderId = ARGV[3]
+
 -- 2.数据key
 -- 2.1库存key
 local stockKey = 'seckill:stock:' .. voucherId
@@ -25,4 +29,6 @@ end
 redis.call('INCRBY', stockKey, -1)
 -- 3.6下单(保存用户) SADD orderKey userId
 redis.call('SADD', orderKey, userId)
+-- 3.7发送消息到队列中,XADD stream.orders * k1 v1 k2 v2
+redis.call('XADD', 'stream.orders', 'userId', userId, 'voucherId', voucherId, 'id', orderId)
 return 0
