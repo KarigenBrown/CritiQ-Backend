@@ -15,6 +15,7 @@ import me.critiq.backend.exception.SystemException;
 import me.critiq.backend.mapper.SeckillVoucherMapper;
 import me.critiq.backend.mapper.VoucherOrderMapper;
 import me.critiq.backend.domain.entity.VoucherOrder;
+import me.critiq.backend.mq.producer.VoucherOrderProducer;
 import me.critiq.backend.service.VoucherOrderService;
 import me.critiq.backend.util.SecurityUtil;
 import org.redisson.api.RedissonClient;
@@ -49,6 +50,7 @@ public class VoucherOrderServiceImpl extends ServiceImpl<VoucherOrderMapper, Vou
     private final SeckillVoucherMapper seckillVoucherMapper;
     private final StringRedisTemplate stringRedisTemplate;
     private final RedissonClient redissonClient;
+    private final VoucherOrderProducer voucherOrderProducer;
 
     // private final BlockingQueue<VoucherOrder> orderTasks = new ArrayBlockingQueue<>(1024 * 1024);
 
@@ -188,7 +190,7 @@ public class VoucherOrderServiceImpl extends ServiceImpl<VoucherOrderMapper, Vou
         var result = stringRedisTemplate.execute(
                 SECKILL_SCRIPT,
                 Collections.emptyList(),
-                voucherId.toString(), userId.toString(), String.valueOf(orderId)
+                voucherId.toString(), userId.toString() //, String.valueOf(orderId)
         );
 
         // 2.判断结果是否为0
@@ -199,19 +201,20 @@ public class VoucherOrderServiceImpl extends ServiceImpl<VoucherOrderMapper, Vou
         }
         // 2.2为0,有购买资格,把下单信息保存到阻塞队列
         // 2.创建订单
-        /*var voucherOrder = VoucherOrder.builder()
+        var voucherOrder = VoucherOrder.builder()
                 // 2.1订单id
                 .id(orderId)
                 // 2.2用户id
                 .userId(userId)
                 // 2.3代金券id
                 .voucherId(voucherId)
-                .build();*/
+                .build();
         // @Transactional需要代理对象才有事务功能
-        proxy = (VoucherOrderService) AopContext.currentProxy();
+        // proxy = (VoucherOrderService) AopContext.currentProxy();
 
         // 2.4放入阻塞队列
         // orderTasks.add(voucherOrder);
+        voucherOrderProducer.produce(voucherOrder);
 
         // 3返回订单id
         return orderId;

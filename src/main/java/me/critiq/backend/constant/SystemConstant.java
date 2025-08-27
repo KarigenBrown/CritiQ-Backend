@@ -23,6 +23,7 @@ public class SystemConstant {
     public static final String SECKILL_STOCK_KEY = "seckill:stock:";
     public static final String SECKILL_ORDER_KEY = "seckill:order:";
     public static final String STREAM_NAME = "stream.orders";
+    public static final String QUEUE_NAME = "queue.orders";
 
     private SystemConstant() {
     }
