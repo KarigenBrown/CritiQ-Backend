@@ -1,6 +1,7 @@
 package me.critiq.backend.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import me.critiq.backend.domain.entity.Voucher;
 import me.critiq.backend.domain.entity.VoucherOrder;
 
 /**
@@ -11,5 +12,10 @@ import me.critiq.backend.domain.entity.VoucherOrder;
  */
 public interface VoucherOrderService extends IService<VoucherOrder> {
 
+    Long seckillVoucher(Long voucherId);
+
+    Long createVoucherOrder(Long voucherId, Long userId);
+
+    void createVoucherOrder(VoucherOrder voucherOrder);
 }
 

@@ -1,5 +1,5 @@
 server:
-  port: 8081
+  port: 8080
 spring:
   application:
     name: critiq
@@ -19,13 +19,36 @@ spring:
           time-between-eviction-runs: 10s
       database: 6
   jackson:
-    default-property-inclusion: non_null # JSON?????????
+    default-property-inclusion: non_null # JSON处理时忽略非空字段
+  mail:
+    host: smtp.qq.com
+    username: no.msg.reply@qq.com
+    password:
+    properties:
+      smtp:
+        ssl:
+          enabled: true
+    ssl:
+      enabled: true
+  cloud:
+    stream:
+      function:
+        bindings:
+          voucherOrder-in-0: queue.orders
+    aws:
+      s3:
+        endpoint: http://localhost:9000
+        region: eu-west-2
+        path-style-access-enabled: true
+      credentials:
+        access-key: minioadmin
+        secret-key: minioadmin
   rabbitmq:
     host: localhost
     username: rabbitmq
     password: rabbitmq
     virtual-host: /
-    port: 15672
+    port: 5672
     listener:
       simple:
         concurrency: 10
@@ -40,8 +63,16 @@ spring:
         max-attempts: 3
         max-interval: 10000ms
         multiplier: 1
+  main:
+    allow-circular-references: true
 mybatis-plus:
-  type-aliases-package: me.critiq.backend.domain.entiry # ?????
+  type-aliases-package: me.critiq.backend.domain.entity # 别名扫描包
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+jwt:
+  key:
+    private: classpath:key/private_key.pem
+    public: classpath:key/public_key.pem
 logging:
   level:
     root: info

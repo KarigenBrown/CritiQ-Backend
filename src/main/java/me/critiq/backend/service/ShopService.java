@@ -11,5 +11,10 @@ import me.critiq.backend.domain.entity.Shop;
  */
 public interface ShopService extends IService<Shop> {
 
+    Shop queryById(Long id);
+
+    void update(Shop shop);
+
+    void saveShop2Redis(Long id, Long expireSeconds);
 }
 

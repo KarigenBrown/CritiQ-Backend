@@ -8,9 +8,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.experimental.Accessors;
+import lombok.*;
 
 /**
  * (UserInfo)表实体类
@@ -19,9 +17,11 @@ import lombok.experimental.Accessors;
  * @since 2025-08-10 15:31:22
  */
 @Data
-@Accessors(chain = true)
+@Builder
 @TableName("user_info")
+@NoArgsConstructor
 @EqualsAndHashCode(callSuper = false)
+@AllArgsConstructor
 public class UserInfo {
     // 主键,用户id
     @TableId(value = "user_id", type = IdType.AUTO)
@@ -42,10 +42,6 @@ public class UserInfo {
     private LocalDate birthday;
     // 积分
     private Integer credits;
-    // 会员级别,0~9级,0代表未开通会员
-    @Max(9)
-    @Min(10)
-    private Integer level;
     // 创建时间
     private LocalDateTime createTime;
     // 更新时间

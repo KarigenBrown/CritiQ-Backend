@@ -8,9 +8,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.experimental.Accessors;
+import lombok.*;
 
 /**
  * (Voucher)表实体类
@@ -19,9 +17,11 @@ import lombok.experimental.Accessors;
  * @since 2025-08-10 15:31:22
  */
 @Data
-@Accessors(chain = true)
+@Builder
 @TableName("voucher")
+@NoArgsConstructor
 @EqualsAndHashCode(callSuper = false)
+@AllArgsConstructor
 public class Voucher {
     // 主键
     @TableId(value = "id", type = IdType.AUTO)

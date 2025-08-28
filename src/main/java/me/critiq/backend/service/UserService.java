@@ -1,6 +1,9 @@
 package me.critiq.backend.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import jakarta.servlet.http.HttpSession;
+import me.critiq.backend.domain.dto.LoginFormDto;
+import me.critiq.backend.domain.dto.RegisterFormDto;
 import me.critiq.backend.domain.entity.User;
 
 /**
@@ -11,5 +14,10 @@ import me.critiq.backend.domain.entity.User;
  */
 public interface UserService extends IService<User> {
 
+    void getCode(String email);
+
+    void register(RegisterFormDto registerForm);
+
+    String login(LoginFormDto loginForm);
 }
 
