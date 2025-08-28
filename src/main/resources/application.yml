@@ -35,6 +35,14 @@ spring:
       function:
         bindings:
           voucherOrder-in-0: queue.orders
+    aws:
+      s3:
+        endpoint: http://localhost:9000
+        region: eu-west-2
+        path-style-access-enabled: true
+      credentials:
+        access-key: minioadmin
+        secret-key: minioadmin
   rabbitmq:
     host: localhost
     username: rabbitmq

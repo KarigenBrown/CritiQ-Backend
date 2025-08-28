@@ -24,6 +24,7 @@ public class SystemConstant {
     public static final String SECKILL_ORDER_KEY = "seckill:order:";
     public static final String STREAM_NAME = "stream.orders";
     public static final String QUEUE_NAME = "queue.orders";
+    public static final String BUCKET_NAME = "critiq";
 
     private SystemConstant() {
     }
