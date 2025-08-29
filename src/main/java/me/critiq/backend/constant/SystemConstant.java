@@ -25,6 +25,8 @@ public class SystemConstant {
     public static final String STREAM_NAME = "stream.orders";
     public static final String QUEUE_NAME = "queue.orders";
     public static final String BUCKET_NAME = "critiq";
+    public static final Long MAX_PAGE_SIZE = 10L;
+    public static final String BLOG_LIKED_KEY = "blog:liked:";
 
     private SystemConstant() {
     }

@@ -21,6 +21,7 @@ import org.springframework.util.StringUtils;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -100,10 +101,10 @@ public class ShopServiceImpl extends ServiceImpl<ShopMapper, Shop> implements Sh
         // 6.1获取互斥锁
         var lockKey = SystemConstant.LOCK_SHOP_KEY + id;
         var lock = redissonClient.getLock(lockKey);
-        boolean isLock = lock.tryLock();
+        var isLock = lock.tryLock();
 
         // 6.2判断是否获取锁成功
-        if (isLock && lock.getHoldCount() == 1) {
+        if (isLock && Objects.equals(lock.getHoldCount(), 1)) {
             // 6.3成功,开启独立线程,实现缓存重建
             CACHE_REBUILD_EXECUTOR.submit(() -> {
                 try {
@@ -136,7 +137,7 @@ public class ShopServiceImpl extends ServiceImpl<ShopMapper, Shop> implements Sh
         }
 
         // 判断命中是否是空字符串,应对缓存穿透
-        if (shopJson != null) {
+        if (Objects.nonNull(shopJson)) {
             // 之前查询过数据库,没有该数据,已经被记录到redis,返回一个错误信息
             throw new SystemException(ResponseStatusEnum.SHOP_NOT_FOUND);
         }
@@ -150,7 +151,7 @@ public class ShopServiceImpl extends ServiceImpl<ShopMapper, Shop> implements Sh
         Shop shop = null;
         try {
             // 此处因为判断是否是lock在try块里面所以所以无论是否获取到锁finally都会执行,需要判断是否为当前线程获取到锁
-            boolean isLock = lock.tryLock();
+            var isLock = lock.tryLock();
             // 4.2判断是否获取成功
             if (!isLock) {
                 log.info("获取锁失败{}", Thread.currentThread().getName());
@@ -165,7 +166,7 @@ public class ShopServiceImpl extends ServiceImpl<ShopMapper, Shop> implements Sh
             Thread.sleep(200);
 
             // 5.不存在,返回错误
-            if (shop == null) {
+            if (Objects.isNull(shop)) {
                 // 将空字符串写入redis,应对缓存穿透
                 // 因为不管数据库中有没有数据,最后redis中都会有这个键,同样对应缓存击穿
                 stringRedisTemplate.opsForValue().set(cacheKey, SystemConstant.CACHE_NULL_VALUE, Duration.ofMinutes(SystemConstant.CACHE_NULL_TTL));
@@ -201,7 +202,7 @@ public class ShopServiceImpl extends ServiceImpl<ShopMapper, Shop> implements Sh
         }
 
         // 判断命中是否是空字符串,应对缓存穿透
-        if (shopJson != null) {
+        if (Objects.nonNull(shopJson)) {
             // 之前查询过数据库,没有该数据,已经被记录到redis,返回一个错误信息
             throw new SystemException(ResponseStatusEnum.SHOP_NOT_FOUND);
         }
@@ -211,7 +212,7 @@ public class ShopServiceImpl extends ServiceImpl<ShopMapper, Shop> implements Sh
         var shop = this.getById(id);
 
         // 5.不存在,返回错误
-        if (shop == null) {
+        if (Objects.isNull(shop)) {
             // 将空字符串写入redis,应对缓存穿透
             stringRedisTemplate.opsForValue().set(cacheKey, SystemConstant.CACHE_NULL_VALUE, Duration.ofMinutes(SystemConstant.CACHE_NULL_TTL));
             // 第一次查询数据库,没有该数据,返回错误信息
@@ -228,8 +229,8 @@ public class ShopServiceImpl extends ServiceImpl<ShopMapper, Shop> implements Sh
     @Override
     @Transactional
     public void update(Shop shop) {
-        Long id = shop.getId();
-        if (id == null) {
+        var id = shop.getId();
+        if (Objects.isNull(id)) {
             throw new SystemException(ResponseStatusEnum.ID_NOT_NULL);
         }
         this.updateById(shop);
