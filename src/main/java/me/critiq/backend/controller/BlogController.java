@@ -12,6 +12,7 @@ import me.critiq.backend.domain.vo.UserVo;
 import me.critiq.backend.service.BlogService;
 import me.critiq.backend.util.PathUtil;
 import me.critiq.backend.util.SecurityUtil;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -73,6 +74,7 @@ public class BlogController {
         return ResponseEntity.ok(hotBlog);
     }
 
+    @Cacheable(cacheNames = {"blog"}, key = "#id")
     @GetMapping("/{id}")
     public ResponseEntity<Blog> queryBlogById(@PathVariable("id") Long id) {
         var blog = blogService.queryByBlogId(id);

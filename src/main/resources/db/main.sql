@@ -331,16 +331,16 @@ CREATE TABLE `user`
 -- Records of user
 -- ----------------------------
 INSERT INTO `user`
-VALUES (1, '1@qq.com', '13686869696', '', 0, '小鱼同学', '/imgs/blogs/blog1.jpg', '2021-12-24 10:27:19',
+VALUES (1, '1@qq.com', '13686869696', '', 0, '小鱼同学', '/imgs/blogs/blog1.jpg', '', '2021-12-24 10:27:19',
         '2022-01-11 16:04:00');
 INSERT INTO `user`
-VALUES (2, '2@qq.com', '13838411438', '', 0, '可可今天不吃肉', '/imgs/icons/kkjtbcr.jpg', '2021-12-24 15:14:39',
+VALUES (2, '2@qq.com', '13838411438', '', 0, '可可今天不吃肉', '/imgs/icons/kkjtbcr.jpg', '', '2021-12-24 15:14:39',
         '2021-12-28 19:58:04');
 INSERT INTO `user`
-VALUES (4, '3@qq.com', '13456789011', '', 0, 'user_slxaxy2au9f3tanffaxr', '', '2022-01-07 12:07:53',
+VALUES (4, '3@qq.com', '13456789011', '', 0, 'user_slxaxy2au9f3tanffaxr', '', '', '2022-01-07 12:07:53',
         '2022-01-07 12:07:53');
 INSERT INTO `user`
-VALUES (5, '4@qq.com', '13456789001', '', 0, '可爱多', '/imgs/icons/user5-icon.png', '2022-01-07 16:11:33',
+VALUES (5, '4@qq.com', '13456789001', '', 0, '可爱多', '/imgs/icons/user5-icon.png', '', '2022-01-07 16:11:33',
         '2022-03-11 09:09:20');
 
 -- ----------------------------
