@@ -5,10 +5,9 @@ import lombok.RequiredArgsConstructor;
 import me.critiq.backend.domain.entity.Voucher;
 import me.critiq.backend.service.VoucherService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * (Voucher)表控制层
@@ -27,6 +26,12 @@ public class VoucherController {
     public ResponseEntity<Long> addVoucher(@RequestBody Voucher voucher) {
         voucherService.save(voucher);
         return ResponseEntity.ok(voucher.getId());
+    }
+
+    @GetMapping("/list/{shopId}")
+    public ResponseEntity<List<Voucher>> queryVoucherOfShop(@PathVariable("shopId") Long shopId) {
+        var vouchers = voucherService.queryVoucherOfShop(shopId);
+        return ResponseEntity.ok(vouchers);
     }
 }
 

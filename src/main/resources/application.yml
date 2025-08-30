@@ -73,6 +73,13 @@ jwt:
   key:
     private: classpath:key/private_key.pem
     public: classpath:key/public_key.pem
+resilience4j:
+  ratelimiter:
+    instances:
+      seckill:
+        limit-for-period: 2000
+        limit-refresh-period: 1s
+        timeout-duration: 0
 logging:
   level:
     root: info
