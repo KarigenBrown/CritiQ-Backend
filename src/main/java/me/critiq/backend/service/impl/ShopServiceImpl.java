@@ -2,6 +2,8 @@ package me.critiq.backend.service.impl;
 
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
+import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,16 +16,26 @@ import me.critiq.backend.domain.entity.Shop;
 import me.critiq.backend.service.ShopService;
 import me.critiq.backend.util.CacheClient;
 import org.redisson.api.RedissonClient;
+import org.springframework.data.geo.Distance;
+import org.springframework.data.geo.GeoResult;
+import org.springframework.data.geo.GeoResults;
+import org.springframework.data.redis.connection.RedisGeoCommands;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.domain.geo.GeoReference;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
 /**
  * (Shop)表服务实现类
@@ -257,6 +269,63 @@ public class ShopServiceImpl extends ServiceImpl<ShopMapper, Shop> implements Sh
         } catch (InterruptedException e) {
             throw new SystemException(ResponseStatusEnum.SYSTEM_ERROR);
         }
+    }
+
+    @Override
+    public List<Shop> queryShopByType(Integer typeId, Integer current, Double x, Double y) {
+        // 1.计算分页参数
+        var from = (current - 1) * SystemConstant.MAX_PAGE_SIZE;
+        var end = current * SystemConstant.MAX_PAGE_SIZE;
+
+        // 2.查询redis,按照距离分页,排序,结果:shopId,distance
+        // GEOSEARCH key FROMLONLAT x y BYRADIUS 10 WITHDIST
+        var key = SystemConstant.SHOP_GEO_KEY + typeId;
+        var results = stringRedisTemplate.opsForGeo().search(
+                key,
+                GeoReference.fromCoordinate(x, y),
+                new Distance(5000),
+                RedisGeoCommands.GeoSearchCommandArgs.newGeoSearchArgs()
+                        .includeDistance()
+                        .limit(end)
+        );
+
+        // 3.解析出id
+        if (results == null) {
+            return Collections.emptyList();
+        }
+        var list = results.getContent();
+        if (list.size() <= from) {
+            // 没有下一页了,结束
+            return Collections.emptyList();
+        }
+        var distanceMap = list.stream()
+                // 3.1接入from-end的部分
+                .skip(from)
+                .collect(Collectors.toMap(
+                        result -> result.getContent().getName(),
+                        GeoResult::getDistance
+                ));
+
+        // 4.根据id查询shop
+        var idStr = String.join(",", distanceMap.keySet());
+        var ids = distanceMap.keySet().stream().map(Long::valueOf).toList();
+        var shops = this.lambdaQuery()
+                .in(Shop::getId, ids)
+                .last("ORDER BY FIELD(id, " + idStr + ")")
+                .list();
+        for (var shop : shops) {
+            shop.setDistance(distanceMap.get(shop.getId().toString()).getValue());
+        }
+        // 5.返回
+        return shops;
+    }
+
+    @Override
+    public List<Shop> queryShopByType(Integer typeId, Integer current) {
+        return this.lambdaQuery()
+                .eq(Shop::getTypeId, typeId)
+                .page(Page.of(current, SystemConstant.MAX_PAGE_SIZE))
+                .getRecords();
     }
 }
 

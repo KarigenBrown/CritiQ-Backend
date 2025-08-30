@@ -2,6 +2,9 @@ package me.critiq.backend.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import me.critiq.backend.domain.entity.Follow;
+import me.critiq.backend.domain.entity.User;
+
+import java.util.List;
 
 /**
  * (Follow)表服务接口
@@ -11,5 +14,10 @@ import me.critiq.backend.domain.entity.Follow;
  */
 public interface FollowService extends IService<Follow> {
 
+    void follow(Long followUserId, Boolean isFollow);
+
+    Boolean isFollow(Long followUserId);
+
+    List<User> followCommons(Long peerId);
 }
 

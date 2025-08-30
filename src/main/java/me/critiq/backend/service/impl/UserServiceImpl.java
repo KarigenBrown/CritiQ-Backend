@@ -18,8 +18,10 @@ import me.critiq.backend.service.EmailService;
 import me.critiq.backend.service.UserService;
 import me.critiq.backend.util.RegexUtil;
 import me.critiq.backend.constant.SystemConstant;
+import me.critiq.backend.util.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.data.redis.connection.BitFieldSubCommands;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -31,10 +33,14 @@ import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -137,6 +143,67 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
                 .claim(SystemConstant.LEVEL, user.getLevel().toString())
                 .build();
         return jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
+    }
+
+    @Override
+    public void sign() {
+        // 1.获取当前登录的用户
+        var userId = SecurityUtil.getUserId();
+        // 2.获取日期
+        var now = LocalDate.now();
+        // 3.拼接key
+        var keyInfix = now.format(DateTimeFormatter.ofPattern("yyyy:MM:"));
+        var key = SystemConstant.SIGN_KEY + keyInfix + userId;
+        // 4.获取今天是本月的第几天
+        int dayOfMonth = now.getDayOfMonth();
+        // 5.写入redis SET key offset 1
+        stringRedisTemplate.opsForValue().setBit(
+                key,
+                dayOfMonth - 1,
+                true
+        );
+    }
+
+    @Override
+    public Integer signCount() {
+        // 1.获取当前登录的用户
+        var userId = SecurityUtil.getUserId();
+        // 2.获取日期
+        var now = LocalDate.now();
+        // 3.拼接key
+        var keyInfix = now.format(DateTimeFormatter.ofPattern("yyyy:MM:"));
+        var key = SystemConstant.SIGN_KEY + keyInfix + userId;
+        // 4.获取今天是本月的第几天
+        int dayOfMonth = now.getDayOfMonth();
+        // 5.获取本月截至今天为止的所有签到记录 BITFIELD key GET type index
+        var result = stringRedisTemplate.opsForValue().bitField(
+                key,
+                BitFieldSubCommands.create()
+                        .get(BitFieldSubCommands.BitFieldType.unsigned(dayOfMonth)).valueAt(0)
+        );
+        if (CollectionUtils.isEmpty(result)) {
+            // 没有签到结果
+            return 0;
+        }
+        var number = result.getFirst();
+        if (number == null || number == 0) {
+            return 0;
+        }
+        // 6.循环遍历
+        var counter = 0;
+        while (true) {
+            // 6.1让这个数字与1做与运算,得到数字的最后一个bit位,判断这个bit位是否为0
+            if ((number & 1) == 0) {
+                // 6.2如果为0,说明未签到,结束
+                break;
+            } else {
+                // 6.3如果不为0,说明已签到,计数器+1
+                counter++;
+            }
+            // 6.5把数字右移一位,抛弃最后一个bit位,继续下一个bit位
+            number >>>= 1;
+        }
+        return counter;
     }
 
     @Override

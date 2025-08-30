@@ -19,5 +19,9 @@ public interface UserService extends IService<User> {
     void register(RegisterFormDto registerForm);
 
     String login(LoginFormDto loginForm);
+
+    void sign();
+
+    Integer signCount();
 }
 

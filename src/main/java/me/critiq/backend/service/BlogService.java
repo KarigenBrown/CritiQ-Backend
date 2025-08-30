@@ -3,6 +3,7 @@ package me.critiq.backend.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import me.critiq.backend.domain.entity.Blog;
 import me.critiq.backend.domain.entity.User;
+import reactor.util.function.Tuple3;
 
 import java.util.List;
 
@@ -21,5 +22,9 @@ public interface BlogService extends IService<Blog> {
     void likeBlog(Long id);
 
     List<User> queryBlogLikes(Long id);
+
+    void saveBlog(Blog blog);
+
+    Tuple3<List<Blog>, Long, Integer> queryBlogOfFollow(Long max, Integer offset);
 }
 

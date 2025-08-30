@@ -1,6 +1,7 @@
 package me.critiq.backend.controller;
 
 
+import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import lombok.RequiredArgsConstructor;
 import me.critiq.backend.service.VoucherOrderService;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +23,7 @@ public class VoucherOrderController {
     // 服务对象
     private final VoucherOrderService voucherOrderService;
 
+    @RateLimiter(name = "seckill")
     @PostMapping("/seckill/{id}")
     public ResponseEntity<Long> seckillVoucher(@PathVariable("id") Long id) {
         var orderId = voucherOrderService.seckillVoucher(id);

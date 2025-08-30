@@ -10,6 +10,7 @@ import me.critiq.backend.constant.SystemConstant;
 import me.critiq.backend.domain.dto.LoginFormDto;
 import me.critiq.backend.domain.dto.RegisterFormDto;
 import me.critiq.backend.domain.entity.User;
+import me.critiq.backend.domain.entity.UserInfo;
 import me.critiq.backend.domain.vo.UserVo;
 import me.critiq.backend.service.UserService;
 import me.critiq.backend.util.SecurityUtil;
@@ -20,6 +21,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * (User)表控制层
@@ -66,6 +68,36 @@ public class UserController {
         var userMap = stringRedisTemplate.opsForHash().entries(SystemConstant.LOGIN_USER_KEY + userId);
         var userVo = BeanUtil.toBean(userMap, UserVo.class);
         return ResponseEntity.ok(userVo);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<UserVo> queryUserById(@PathVariable("id") Long id) {
+        // 查询详情
+        var user = userService.getOptById(id);
+        if (user.isEmpty()) {
+            return ResponseEntity.ok().build();
+        }
+        var userVo = BeanUtil.copyProperties(user.get(), UserVo.class);
+        // 返回
+        return ResponseEntity.ok(userVo);
+    }
+
+    @PostMapping("/sign")
+    public ResponseEntity<Void> sign() {
+        userService.sign();
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/sign/count")
+    public ResponseEntity<Integer> signCount() {
+        var count = userService.signCount();
+        return ResponseEntity.ok(count);
+    }
+
+    @DeleteMapping("/logout")
+    public ResponseEntity<Void> logout() {
+        // TODO 实现登出功能
+        return ResponseEntity.ok().build();
     }
 }
 

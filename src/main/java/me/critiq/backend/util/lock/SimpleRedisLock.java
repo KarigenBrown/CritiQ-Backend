@@ -1,4 +1,4 @@
-package me.critiq.backend.util;
+package me.critiq.backend.util.lock;
 
 import cn.hutool.core.lang.UUID;
 import lombok.RequiredArgsConstructor;

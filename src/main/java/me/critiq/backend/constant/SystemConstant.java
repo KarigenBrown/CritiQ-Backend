@@ -27,6 +27,10 @@ public class SystemConstant {
     public static final String BUCKET_NAME = "critiq";
     public static final Long MAX_PAGE_SIZE = 10L;
     public static final String BLOG_LIKED_KEY = "blog:liked:";
+    public static final String FOLLOWS_KEY = "follows:";
+    public static final String FEED_KEY = "feed:";
+    public static final String SHOP_GEO_KEY = "shop:geo:";
+    public static final String SIGN_KEY = "sign:";
 
     private SystemConstant() {
     }

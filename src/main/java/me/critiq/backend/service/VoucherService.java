@@ -3,6 +3,8 @@ package me.critiq.backend.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import me.critiq.backend.domain.entity.Voucher;
 
+import java.util.List;
+
 /**
  * (Voucher)表服务接口
  *
@@ -11,5 +13,6 @@ import me.critiq.backend.domain.entity.Voucher;
  */
 public interface VoucherService extends IService<Voucher> {
 
+    List<Voucher> queryVoucherOfShop(Long shopId);
 }
 

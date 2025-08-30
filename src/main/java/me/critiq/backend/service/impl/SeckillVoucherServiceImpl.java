@@ -39,11 +39,5 @@ public class SeckillVoucherServiceImpl extends ServiceImpl<SeckillVoucherMapper,
         // 保存秒杀库存到redis中
         stringRedisTemplate.opsForValue().set(SystemConstant.SECKILL_STOCK_KEY + voucher.getId(), voucher.getStock().toString());
     }
-
-    @Override
-    public void saveVouchers2Redis() {
-        var vouchers = this.list();
-        vouchers.forEach(voucher -> stringRedisTemplate.opsForValue().set(SystemConstant.SECKILL_STOCK_KEY + voucher.getVoucherId(), voucher.getStock().toString()));
-    }
 }
 
