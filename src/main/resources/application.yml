@@ -65,6 +65,16 @@ spring:
         multiplier: 1
   main:
     allow-circular-references: true
+  security:
+    oauth2:
+      client:
+        registration:
+          github:
+            client-id: Ov23li26kjwpMBioIQBY
+            client-secret: b932d5821f8e2a514b99f30c5944d002429dee01
+            scope:
+              - user:email
+              - read:user
 mybatis-plus:
   type-aliases-package: me.critiq.backend.domain.entity # 别名扫描包
   configuration:

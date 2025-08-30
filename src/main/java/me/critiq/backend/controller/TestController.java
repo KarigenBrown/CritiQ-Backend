@@ -21,4 +21,14 @@ public class TestController {
         future.thenAccept(log::info);
         return ResponseEntity.ok("async success");
     }
+
+    @GetMapping("/insecure")
+    public ResponseEntity<String> insecure() {
+        return ResponseEntity.ok("insecure");
+    }
+
+    @GetMapping("/secure")
+    public ResponseEntity<String> secure() {
+        return ResponseEntity.ok("secure");
+    }
 }

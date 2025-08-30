@@ -316,6 +316,7 @@ CREATE TABLE `user`
     `level`       tinyint(1) UNSIGNED                                           NULL     DEFAULT 0 COMMENT '会员级别,0~9级,0代表未开通会员',
     `nick_name`   varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci  NULL     DEFAULT '' COMMENT '昵称,默认是用户id',
     `icon`        varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL     DEFAULT '' COMMENT '人物头像',
+    `third`       varchar(20)                                                   NULL     DEFAULT '' COMMENT '第三方厂商',
     `create_time` timestamp                                                     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     `update_time` timestamp                                                     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
     PRIMARY KEY (`id`) USING BTREE,

@@ -7,6 +7,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.critiq.backend.constant.SystemConstant;
 import me.critiq.backend.filter.RedisUserRefreshFilter;
+import me.critiq.backend.handler.oauth2.OAuth2LoginSuccessHandler;
+import me.critiq.backend.service.impl.AppOauth2UserService;
+import me.critiq.backend.service.impl.Oauth2OidcUserService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,6 +25,12 @@ import org.springframework.security.config.annotation.web.configurers.LogoutConf
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserRequest;
+import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
+import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
+import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
@@ -35,6 +44,7 @@ import org.springframework.security.web.SecurityFilterChain;
 
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
+import java.util.Map;
 
 @Slf4j
 @Configuration
@@ -42,6 +52,9 @@ import java.security.interfaces.RSAPublicKey;
 @RequiredArgsConstructor
 public class SecurityConfig {
     private final RedisUserRefreshFilter redisUserRefreshFilter;
+    private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
+    private final Oauth2OidcUserService oidcUserService;
+    private final AppOauth2UserService oauth2UserService;
 
     @Value("${jwt.key.public}")
     private RSAPublicKey publicKey;
@@ -59,16 +72,30 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/user/code").anonymous()
                         .requestMatchers(HttpMethod.POST, "/user/register").anonymous()
                         .requestMatchers(HttpMethod.POST, "/user/login").anonymous()
+                        // oauth2
+                        .requestMatchers("/oauth2/**").permitAll()
+                        .requestMatchers("/login/oauth2/**").permitAll()
+                        // test
+                        .requestMatchers("/test/insecure").permitAll()
+                        .requestMatchers("/test/secure").authenticated()
                         // any other
                         .anyRequest().permitAll()
                 ).cors(Customizer.withDefaults())
                 .csrf(CsrfConfigurer::disable)
                 .formLogin(FormLoginConfigurer::disable)
                 .logout(LogoutConfigurer::disable)
+                // http://localhost:8080/oauth2/authorization/github
+                .oauth2Login(oauth2 -> oauth2
+                        /*.userInfoEndpoint(userinfo -> userinfo
+                                .userService(oauth2UserService)
+                                // .oidcUserService(oidcUserService)
+                        )*/
+                        .successHandler(oAuth2LoginSuccessHandler)
+                )
                 .oauth2ResourceServer(oauth -> oauth
                         .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter()))
                 )
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
                 .exceptionHandling(exceptions -> exceptions
                         .authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint())
                         .accessDeniedHandler(new BearerTokenAccessDeniedHandler())

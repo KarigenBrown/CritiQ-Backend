@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import me.critiq.backend.constant.SystemConstant;
 import me.critiq.backend.util.SecurityUtil;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -22,7 +23,7 @@ public class RedisUserRefreshFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         var authentication = SecurityUtil.getAuthentication();
-        if (authentication != null && authentication.isAuthenticated()) {
+        if (authentication != null && authentication.isAuthenticated() && authentication.getPrincipal() instanceof Jwt) {
             var userId = SecurityUtil.getUserId();
             stringRedisTemplate.expire(SystemConstant.LOGIN_USER_KEY + userId, Duration.ofMinutes(SystemConstant.LOGIN_USER_TTL));
         }
