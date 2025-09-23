@@ -30,6 +30,10 @@ public class Oauth2OidcUserService implements OAuth2UserService<OidcUserRequest,
         var oidcUser = delegate.loadUser(userRequest);
 
         log.info("email = {}", oidcUser.getEmail());
+        log.info("full name = {}", oidcUser.getFullName());
+        log.info("birth date = {}", oidcUser.getBirthdate());
+        log.info("gender = {}", oidcUser.getGender());
+        log.info("picture = {}", oidcUser.getPicture());
 
         return oidcUser;
     }

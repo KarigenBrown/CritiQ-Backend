@@ -84,12 +84,13 @@ public class SecurityConfig {
                 .csrf(CsrfConfigurer::disable)
                 .formLogin(FormLoginConfigurer::disable)
                 .logout(LogoutConfigurer::disable)
-                // http://localhost:8080/oauth2/authorization/github
                 .oauth2Login(oauth2 -> oauth2
-                        /*.userInfoEndpoint(userinfo -> userinfo
+                        .userInfoEndpoint(userinfo -> userinfo
+                                // http://localhost:8080/oauth2/authorization/github
                                 .userService(oauth2UserService)
-                                // .oidcUserService(oidcUserService)
-                        )*/
+                                // http://localhost:8080/oauth2/authorization/google
+                                .oidcUserService(oidcUserService)
+                        )
                         .successHandler(oAuth2LoginSuccessHandler)
                 )
                 .oauth2ResourceServer(oauth -> oauth

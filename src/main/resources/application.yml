@@ -75,6 +75,9 @@ spring:
             scope:
               - user:email
               - read:user
+          google:
+            client-id: 1047751614215-s1k3uf3h71nev38knhnfd35ijcnnuqvs.apps.googleusercontent.com
+            client-secret: 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
 mybatis-plus:
   type-aliases-package: me.critiq.backend.domain.entity # 别名扫描包
   configuration:

@@ -49,6 +49,10 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
                                         HttpServletResponse response,
                                         Authentication authentication) throws IOException {
 
+        if (authentication.getPrincipal() instanceof OidcUser oidcUser){
+            log.info("oidc user");
+        }
+
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
 
         // 获取用户信息
