@@ -4,6 +4,7 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.bean.copier.CopyOptions;
 import cn.hutool.core.util.RandomUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.nimbusds.jwt.JWTClaimsSet;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,10 +40,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * (User)表服务实现类
@@ -133,6 +131,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         // 4.生成token并返回
         // 通过jwt+spring security+security context holder的实现等效于session+thread local+interceptor
         var now = Instant.now();
+        // 因为issuedAt和expiresAt接口不兼容,暂时放弃
         var claims = JwtClaimsSet.builder()
                 .issuer(SystemConstant.SELF)
                 .issuedAt(now)
@@ -142,6 +141,15 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
                 // 大坑,authority必须是字符串
                 .claim(SystemConstant.LEVEL, user.getLevel().toString())
                 .build();
+
+        /*var claims = new JWTClaimsSet.Builder()
+                .issuer(SystemConstant.SELF)
+                .issueTime(Date.from(now))
+                .expirationTime(Date.from(now.plusSeconds(Duration.ofHours(7).toSeconds())))
+                .subject(authentication.getName())
+                .claim(SystemConstant.ID, user.getId())
+                .claim(SystemConstant.LEVEL, user.getLevel().toString())
+                .build();*/
         return jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
     }
 
