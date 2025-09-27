@@ -182,7 +182,9 @@ public class BlogServiceImpl extends ServiceImpl<BlogMapper, Blog> implements Bl
             ids.add(tuple.getValue());
             // 4.2获取分数(时间戳)
             var time = tuple.getScore().longValue();
+            // 时间戳重复所以offset++
             if (time == minTime) {
+                // nextOffset至少为1
                 nextOffset++;
             } else {
                 minTime = time;
