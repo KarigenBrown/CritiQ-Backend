@@ -10,6 +10,7 @@ import me.critiq.backend.constant.SystemConstant;
 import me.critiq.backend.domain.entity.User;
 import me.critiq.backend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -43,13 +44,15 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
     @Lazy
     @Autowired
     private JwtEncoder jwtEncoder;
+    @Value("${app.frontend.login-uri}")
+    private String loginUri;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request,
                                         HttpServletResponse response,
                                         Authentication authentication) throws IOException {
 
-        if (authentication.getPrincipal() instanceof OidcUser oidcUser){
+        if (authentication.getPrincipal() instanceof OidcUser oidcUser) {
             log.info("oidc user");
         }
 
@@ -89,14 +92,16 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
                 .claim(SystemConstant.LEVEL, user.getLevel().toString())
                 .build();
         String token = jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();*/
-        String token = "token";
+        String token = "critiq-token";
+
+        response.sendRedirect(loginUri + "?token=" + token);
 
         // 设置响应头
-        response.setContentType(MimeTypeUtils.TEXT_PLAIN_VALUE);
-        response.setStatus(HttpServletResponse.SC_OK);
+        // response.setContentType(MimeTypeUtils.TEXT_PLAIN_VALUE);
+        // response.setStatus(HttpServletResponse.SC_OK);
 
         // 写入响应
-        response.getWriter().write(token);
-        response.getWriter().flush();
+        // response.getWriter().write(token);
+        // response.getWriter().flush();
     }
 }

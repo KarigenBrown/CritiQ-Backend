@@ -73,22 +73,26 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/user/register").anonymous()
                         .requestMatchers(HttpMethod.POST, "/user/login").anonymous()
                         // oauth2
+                        // 登录地址 /oauth2/authorization/provider
                         .requestMatchers("/oauth2/**").permitAll()
+                        // 回调地址 /login/oauth2/code/provider
                         .requestMatchers("/login/oauth2/**").permitAll()
                         // test
                         .requestMatchers("/test/insecure").permitAll()
                         .requestMatchers("/test/secure").authenticated()
                         // any other
-                        .anyRequest().permitAll()
+                        .anyRequest().authenticated()
                 ).cors(Customizer.withDefaults())
                 .csrf(CsrfConfigurer::disable)
                 .formLogin(FormLoginConfigurer::disable)
                 .logout(LogoutConfigurer::disable)
                 .oauth2Login(oauth2 -> oauth2
                         .userInfoEndpoint(userinfo -> userinfo
-                                // http://localhost:8080/oauth2/authorization/github
+                                // 登录地址 http://localhost:8080/oauth2/authorization/github
+                                // 回调地址 http://localhost:8080/login/oauth2/code/github
                                 .userService(oauth2UserService)
-                                // http://localhost:8080/oauth2/authorization/google
+                                // 登录地址 http://localhost:8080/oauth2/authorization/google
+                                // 回调地址 http://localhost:8080/login/oauth2/code/google
                                 .oidcUserService(oidcUserService)
                         )
                         .successHandler(oAuth2LoginSuccessHandler)

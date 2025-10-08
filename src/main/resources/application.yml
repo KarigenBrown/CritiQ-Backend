@@ -23,7 +23,7 @@ spring:
   mail:
     host: smtp.qq.com
     username: no.msg.reply@qq.com
-    password:
+    password: password
     properties:
       smtp:
         ssl:
@@ -70,14 +70,14 @@ spring:
       client:
         registration:
           github:
-            client-id: Ov23li26kjwpMBioIQBY
-            client-secret: b932d5821f8e2a514b99f30c5944d002429dee01
+            client-id: client-id
+            client-secret: client-secret
             scope:
               - user:email
               - read:user
           google:
-            client-id: 1047751614215-s1k3uf3h71nev38knhnfd35ijcnnuqvs.apps.googleusercontent.com
-            client-secret: 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
+            client-id: client-id
+            client-secret: client-secret
 mybatis-plus:
   type-aliases-package: me.critiq.backend.domain.entity # 别名扫描包
   configuration:
@@ -96,3 +96,6 @@ resilience4j:
 logging:
   level:
     root: info
+app:
+  frontend:
+    login-uri: "http://localhost:5173/oauth/callback"
