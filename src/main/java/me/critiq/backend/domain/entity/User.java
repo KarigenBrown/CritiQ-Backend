@@ -46,6 +46,8 @@ public class User implements UserDetails {
     private String nickName;
     // 人物头像
     private String icon = "";
+    // 第三方厂商
+    private String third;
     // 创建时间
     private LocalDateTime createTime;
     // 更新时间

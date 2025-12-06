@@ -23,7 +23,7 @@ spring:
   mail:
     host: smtp.qq.com
     username: no.msg.reply@qq.com
-    password:
+    password: password
     properties:
       smtp:
         ssl:
@@ -65,6 +65,19 @@ spring:
         multiplier: 1
   main:
     allow-circular-references: true
+  security:
+    oauth2:
+      client:
+        registration:
+          github:
+            client-id: client-id
+            client-secret: client-secret
+            scope:
+              - user:email
+              - read:user
+          google:
+            client-id: client-id
+            client-secret: client-secret
 mybatis-plus:
   type-aliases-package: me.critiq.backend.domain.entity # 别名扫描包
   configuration:
@@ -83,3 +96,6 @@ resilience4j:
 logging:
   level:
     root: info
+app:
+  frontend:
+    login-uri: "http://localhost:5173/oauth/callback"
